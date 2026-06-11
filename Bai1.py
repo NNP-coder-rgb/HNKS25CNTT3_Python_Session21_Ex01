@@ -9,6 +9,13 @@ logging.basicConfig(
 )
 
 def deposit():
+    """
+    Xử lý chức năng nạp tiền vào ví MoMo.
+    
+    Hàm sẽ yêu cầu người dùng nhập số tiền từ bàn phím. Nếu số tiền hợp lệ 
+    (là số nguyên dương), hệ thống sẽ cập nhật số dư, ghi log thành công và thoát.
+    Nếu nhập sai định dạng hoặc số tiền âm, hệ thống sẽ báo lỗi và yêu cầu nhập lại.
+    """
     while True:
         try:
             input_money = int(input('Nhập số tiền cần nạp: '))
@@ -22,17 +29,24 @@ def deposit():
                 print(f'Số dư hiện tại: {balance:,} VND')
                 logging.info(f'Deposit successful: +{input_money} VND. Current Balance: {balance} VND')
                 break
-        except:
+        except ValueError:
             print('Lỗi: Vui lòng nhập số tiền hợp lệ.')
             logging.error('ValueError: Invalid numeric input for deposit.')
             continue
 
 def transfer():
+    """
+    Xử lý chức năng chuyển tiền đến số điện thoại khác.
+    
+    Hàm kiểm tra tính hợp lệ của số điện thoại (phải đủ 10 ký tự) và số tiền chuyển 
+    (phải lớn hơn 0 và nhỏ hơn hoặc bằng số dư hiện tại). 
+    Nếu giao dịch lớn hơn hoặc bằng 10,000,000 VND, một cảnh báo (WARNING) sẽ được ghi lại.
+    """
     while True:
         try:
             global balance
             input_phone_number = input('Nhập số điện thoại người nhận: ')
-            if len(input_phone_number) > 10 or len(input_phone_number) < 10:
+            if len(input_phone_number) != 10:
                 print('Số điện thoại phải chuẩn định dạng là 10 chữ số')
             else:
                 input_money = int(input('Nhập số tiền cần chuyển: '))
@@ -52,12 +66,18 @@ def transfer():
                         logging.warning(f'High value transaction detected: {input_money} VND to {input_phone_number}')
                     logging.info(f'Transfer successful: -{input_money:,} VND to {input_phone_number}. Current Balance: {balance:,} VND')
                     break
-        except:
+        except ValueError:
             print('Lỗi: Vui lòng nhập số tiền hợp lệ.')
             logging.error('ValueError: Invalid numeric input for Transfer.')
             continue
 
 def check_history():
+    """
+    Đọc và hiển thị lịch sử giao dịch.
+    
+    Hàm mở file log 'momo_transactions.log' để đọc và in ra màn hình 
+    5 dòng nhật ký giao dịch mới nhất. Nếu file chưa được tạo, hàm sẽ đưa ra thông báo phù hợp.
+    """
     print('--- 5 LỊCH SỬ GIAO DỊCH MỚI NHẤT ---')
     try:
         with open('momo_transactions.log', 'r', encoding='utf-8') as file:
@@ -74,12 +94,20 @@ def check_history():
         print(f'Lỗi khi đọc file lịch sử: {e}')
 
 def view_balance():
+    """
+    Hiển thị số dư hiện tại của ví MoMo.
+    
+    Đồng thời ghi nhận một log INFO về việc người dùng kiểm tra số dư.
+    """
     global balance
-    print('--- SỐ DƯ VI MOMO ---')
-    print(f'Số dư hiện tại: {balance:,} VMD')
+    print('--- SỐ DƯ VÍ MOMO ---')
+    print(f'Số dư hiện tại: {balance:,} VND')
     logging.info(f'Balance checked. Current Balance: {balance:,} VND')
 
 def display_menu():
+    """
+    Hiển thị danh sách các chức năng (Menu) của ứng dụng giả lập Ví MoMo.
+    """
     print()
     print('========== VÍ MOMO GIẢ LẬP ==========')
     print('1. Nạp tiền vào ví')
@@ -90,6 +118,12 @@ def display_menu():
     print('===============================================')
 
 def main():
+    """
+    Hàm khởi chạy chính của chương trình.
+    
+    Điều hướng người dùng đến các chức năng tương ứng dựa trên lựa chọn từ 1 đến 5.
+    Vòng lặp sẽ liên tục chạy cho đến khi người dùng chọn '5' để thoát.
+    """
     option = ''
     while option != '5':
         display_menu()
@@ -119,4 +153,5 @@ def main():
             case _:
                 print('Lựa chọn không hợp lệ, vui lòng nhập lựa chọn từ 1-5!')
 
-main()
+if __name__ == '__main__':
+    main()
